@@ -232,7 +232,7 @@
     </p>
 
     <div class="servidor">
-      <strong>TEGS</strong><br><br>
+      <strong>TREGS</strong><br><br>
       <div class="tags">
         <div class="tag">#JAVASCRIPT</div>
         <div class="tag">#HTML5</div>
@@ -265,39 +265,279 @@
       </div>
     </div>
 
-    <div class="music-panel">
-      <h3>Beethoven - Moonlight Sonata</h3>
-      <div class="play-box">
-        <button onclick="togglePlay()" id="playPauseBtn">
-          <svg id="playIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M10 16.5v-9l6 4.5z"/>
-          </svg>
-          <svg id="pauseIcon" class="hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
-          </svg>
-        </button>
-      </div>
-      <audio id="audio" src="https://www.bensound.com/bensound-music/bensound-slowmotion.mp3"></audio>
+    
+    
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Music Player</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #121212;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .music-player {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: rgba(24, 24, 24, 0.8);
+      padding: 10px;
+      border-radius: 10px;
+      
+      
+      
+      
+    }
+
+    .controls {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 10px;
+    }
+
+    .control-btn {
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .control-btn:focus {
+      outline: none;
+    }
+
+    .icon {
+      width: 40px;
+      height: 40px;
+    }
+
+    .progress-container {
+      
+      display: flex;
+      justify-content: center;
+    }
+
+    .progress-bar {
+      width: 90%;
+      height: 8px;
+      background: #333;
+      border-radius: 5px;
+      appearance: none;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    .progress-bar::-webkit-slider-thumb {
+      width: 20px;
+      height: 20px;
+      
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    
+    }
+
+    .progress-bar::-webkit-slider-runnable-track {
+      background: #222;
+      border-radius: 9px;
+    }
+
+    .prev, .next {
+      background-color: #6a1b9a;
+      border-radius: 5px;
+      padding: 5px;
+    }
+  </style>
+</head>
+<body>
+  
+      <div class="servidor">
+      <strong>Beethoven - Moonlight Sonata</strong><br><br>
+        
+        
+  
+  <div class="music-player">
+    <div class="controls">
+      <button id="prev" class="control-btn prev">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24">
+          <path fill="currentColor" d="M6 18V6h2v12zm3.5-6L18 6v12z" />
+        </svg>
+      </button>
+      <button id="playPause" class="control-btn play">
+        <img id="playPauseIcon" src="https://i.imgur.com/nbzSlSU.png" alt="Play" class="icon" />
+      </button>
+      <button id="next" class="control-btn next">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24">
+          <path fill="currentColor" d="M16 18h2V6h-2M6 18l8.5-6L6 6z" />
+        </svg>
+      </button>
     </div>
+    <div class="progress-container">
+      <input type="range" id="progress" class="progress-bar" value="0" max="100" />
+    </div>
+    <audio id="audio" src=""></audio>
   </div>
 
   <script>
+    const playPauseButton = document.getElementById('playPause');
+    const progressBar = document.getElementById('progress');
+    const prevButton = document.getElementById('prev');
+    const nextButton = document.getElementById('next');
     const audio = document.getElementById('audio');
-    const playIcon = document.getElementById('playIcon');
-    const pauseIcon = document.getElementById('pauseIcon');
 
-    function togglePlay() {
-      if (audio.paused) {
-        audio.play();
-        playIcon.classList.add('hidden');
-        pauseIcon.classList.remove('hidden');
-      } else {
-        audio.pause();
-        playIcon.classList.remove('hidden');
-        pauseIcon.classList.add('hidden');
-      }
+    const songs = [
+      "https://www.bensound.com/bensound-music/bensound-slowmotion.mp3",
+      "https://www.bensound.com/bensound-music/bensound-betterdays.mp3",
+      "https://www.bensound.com/bensound-music/bensound-dubstep.mp3"
+    ];
+    let songIndex = 0;
+
+    function loadSong(index) {
+      audio.src = songs[index];
+      audio.load();
+      if (isPlaying) audio.play();
     }
-  </script>
 
+    let isPlaying = false;
+
+    playPauseButton.addEventListener('click', () => {
+      if (isPlaying) {
+        audio.pause();
+        updatePlayIcon();
+      } else {
+        audio.play();
+        updatePauseIcon();
+      }
+      isPlaying = !isPlaying;
+    });
+
+    prevButton.addEventListener('click', () => {
+      songIndex = (songIndex - 1 + songs.length) % songs.length;
+      loadSong(songIndex);
+    });
+
+    nextButton.addEventListener('click', () => {
+      songIndex = (songIndex + 1) % songs.length;
+      loadSong(songIndex);
+    });
+
+    audio.addEventListener('timeupdate', () => {
+      const progress = (audio.currentTime / audio.duration) * 100;
+      progressBar.value = progress;
+    });
+
+    progressBar.addEventListener('input', () => {
+      audio.currentTime = (progressBar.value / 100) * audio.duration;
+    });
+
+    audio.addEventListener('ended', () => {
+      isPlaying = false;
+      updatePlayIcon();
+    });
+
+    function updatePlayIcon() {
+      document.getElementById('playPauseIcon').src = "https://i.imgur.com/nbzSlSU.png";
+      document.getElementById('playPauseIcon').alt = "Play";
+    }
+
+    function updatePauseIcon() {
+      document.getElementById('playPauseIcon').src = "https://i.imgur.com/i8YvdoB.png";
+      document.getElementById('playPauseIcon').alt = "Pause";
+    }
+
+    // Load first song initially
+    loadSong(songIndex);
+  </script>
 </body>
 </html>
+    
+  
+  
+  
+  <script>
+(function () {
+  const MAX_EMOJIS = 50; // Limite máximo no DOM
+  const emojiList = ["😂", "❤️", "🔥", "✨", "🥳", "😎", "🤩", "💥", "🎉", "🤑", "👻", "💀", "💫", "⚡", "💖"];
+  let currentEmojis = 0;
+
+  // Container no fundo
+  const wrapper = document.createElement("div");
+  wrapper.style.position = "fixed";
+  wrapper.style.top = 0;
+  wrapper.style.left = 0;
+  wrapper.style.width = "100vw";
+  wrapper.style.height = "100vh";
+  wrapper.style.zIndex = "0";
+  wrapper.style.pointerEvents = "none";
+  wrapper.style.overflow = "hidden";
+  document.body.appendChild(wrapper);
+
+  // Estilo e animação
+  const style = document.createElement("style");
+  style.textContent = `
+    @keyframes floatUpEmoji {
+      0% {
+        transform: translateY(0vh);
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(-120vh);
+        opacity: 0;
+      }
+    }
+    .emoji-float {
+      position: absolute;
+      opacity: 0.8;
+      animation: floatUpEmoji linear forwards;
+      will-change: transform, opacity;
+    }
+  `;
+  document.head.appendChild(style);
+
+  function createEmoji() {
+    if (currentEmojis >= MAX_EMOJIS) return;
+
+    const emoji = document.createElement("div");
+    emoji.className = "emoji-float";
+    emoji.textContent = emojiList[Math.floor(Math.random() * emojiList.length)];
+    emoji.style.left = Math.random() * 100 + "vw";
+    emoji.style.bottom = "0vh";
+    emoji.style.fontSize = (Math.random() * 20 + 20) + "px";
+    emoji.style.animationDuration = (Math.random() * 3 + 4) + "s";
+
+    wrapper.appendChild(emoji);
+    currentEmojis++;
+
+    setTimeout(() => {
+      wrapper.removeChild(emoji);
+      currentEmojis--;
+    }, 5000);
+  }
+
+  const interval = setInterval(() => {
+    for (let i = 0; i < 2; i++) createEmoji();
+  }, 200);
+
+  setTimeout(() => clearInterval(interval), 4000); // para após 4 segundos
+})();
+</script>
+  
+  
+  
+  
